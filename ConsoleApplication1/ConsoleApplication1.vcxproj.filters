@@ -33,6 +33,12 @@
     <ClInclude Include="btree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="queuee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="steak.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="btree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="queuee.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="steak.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
