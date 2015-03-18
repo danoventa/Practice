@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "btree.h"
-#include <queue>
-#include <set>
-#include <stack>
+
 
 
 btree::btree()
@@ -52,7 +50,7 @@ btree::node* find_parent(btree::node* root, btree::node* target){
 	return root;
 }
 
-btree::node* find_successor(btree::node* root, node* target){
+btree::node* find_successor(btree::node* root, btree::node* target){
 	auto successor = target->right;
 	if (nullptr != successor->left){
 		while (nullptr != successor->left){

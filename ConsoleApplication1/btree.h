@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 #include <functional>
+#include <queue>
+#include <set>
+#include <stack>
 
 class btree
 {
