@@ -161,19 +161,6 @@ bool balanced_naive(btree::node* root){
 	return std::abs((int)(right_depth - left_depth)) <= 1; // had to modify this for msvs. int casting from book not working. 
 }
 
-bool find_path(btree::node* root, btree::node* target, std::vector<btree::node*>* path){
-	while (nullptr != root && nullptr != target && (path->empty() || path->back() != target)){
-		path->push_back(root);
-		if (target->value < root->value){
-			root = root->left;
-		}
-		else {
-			root = root->right;
-		}
-	}
-	return !target | path->back() == target;
-}
-
 bool balanced(btree::node* root){
 	std::function<bool(btree::node*, size_t*) > balanced_depth = [&balanced_depth](
 		btree::node* root, size_t* depth){
@@ -200,6 +187,19 @@ bool balanced(btree::node* root){
 	return balanced_depth(root, &depth);
 }
 
+bool find_path(btree::node* root, btree::node* target, std::vector<btree::node*>* path){
+	while (nullptr != root && nullptr != target && (path->empty() || path->back() != target)){
+		path->push_back(root);
+		if (target->value < root->value){
+			root = root->left;
+		}
+		else {
+			root = root->right;
+		}
+	}
+	return !target | path->back() == target;
+}
+
 btree::node* lca(btree::node* root, btree::node* x, btree::node* y){
 	std::vector<btree::node*> x_path;
 	std::vector<btree::node*> y_path;
@@ -208,10 +208,73 @@ btree::node* lca(btree::node* root, btree::node* x, btree::node* y){
 	btree::node* lca = nullptr;
 	auto x_path_iterator = x_path.begin();
 	auto y_path_iterator = y_path.begin();
-	while (x_path_iterator != x_path.end() && y_path_iterator !- y_path.end() && *x_path_iterator == *y_path_iterator) {
+	while (x_path_iterator != x_path.end() && y_path_iterator != y_path.end() && *x_path_iterator == *y_path_iterator) {
 		lca = *x_path_iterator++;
 		x_path_iterator++;
 		y_path_iterator++;
 	}
 	return lca;
+}
+
+btree::node* lca_recursive(btree::node* root, btree::node* x, btree::node* y){
+	if (root == x || root == y) return root;
+	if ((x->value < root->value && y->value >= root->value) || (y->value < root->value && x->value >= root->value)){
+		return root;
+	}
+	if (x->value < root->value){
+		return lca_recursive(root->left, x, y);
+	}
+	return lca(root->right, x, y);
+}
+
+btree::node* lca_iterative(btree::node* root, btree::node* x, btree::node* y){
+	if (nullptr != x && nullptr != y && x->value > y->value){
+		std::swap(x, y);
+	}
+	while (nullptr != root && root != x && root != y && (y->value < root->value)){
+		if (y->value < root->value){
+			root = root->left;
+		}
+		else {
+			root = root->right;
+		}
+	}
+	return root;
+}
+
+void inorder(btree::node* root, std::function<void(btree::node*)> visit) {
+	if (nullptr == root) return;
+	inorder(root->left, visit);
+	visit(root);
+	inorder(root->right, visit);
+}
+
+void postorder(btree::node* root, std::function<void(btree::node*)> visit){
+	if (nullptr == root) return;
+	postorder(root->left, visit);
+	postorder(root->right, visit);
+	visit(root);
+}
+
+void preorder(btree::node* root, std::function<void(btree::node*)> visit){
+	if (nullptr == root) return;
+	visit(root);
+	preorder(root->left, visit);
+	preorder(root->right, visit);
+}
+
+btree::node* reconstruct_tree(const std::vector<int>& inorder, const std::vector<int>& preorder) {
+	auto root = new btree::node(preorder[0]);
+	size_t pos = std::find(inorder.begin(), inorder.end(), root->value) - inorder.begin();
+	if (0 != pos) {
+		std::vector<int> left_inorder(inorder.begin(), inorder.begin() + pos);
+		std::vector<int> left_preorder(preorder.begin() + 1, preorder.begin() + 1 + left_inorder.size());
+		root->left = reconstruct_tree(left_inorder, left_preorder);
+	}
+	if (pos != (inorder.size() - 1)){
+		std::vector<int> right_inorder(inorder.begin() + pos + 1, inorder.end());
+		std::vector<int> right_preorder(preorder.begin() + (preorder.size() - right_inorder.size()), preorder.end());
+		root->right = reconstruct_tree(right_inorder, right_preorder);
+	}
+	return root;
 }
