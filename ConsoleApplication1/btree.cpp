@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "btree.h"
 #include <queue>
+#include <set>
+#include <stack>
 
 
 btree::btree()
@@ -123,4 +125,41 @@ size_t size_iterative(btree::node* root){
 	}
 	return count;
 }
+
+size_t depth(btree::node* root){
+	if (nullptr == root) return 0;
+	return 1 + std::max(depth(root->left), depth(root->right));
+}
+
+size_t depth_iterative(btree::node* root){
+	if (nullptr == root) return 0;
+	size_t maxdepth = 0;
+	std::set<btree::node*> visited;
+	std::stack<btree::node*> s;
+	s.push(root);
+	while (!s.empty()){
+		btree::node* top = s.top();
+		if (nullptr != top->left &&  visited.end() == visited.find(top->left)){
+			s.push(top->left);
+		}
+		else if (nullptr != top->right && visited.end() == visited.find(top->right)) {
+			visited.insert(top);
+			maxdepth = std::max(maxdepth, s.size());
+			s.pop();
+		}
+	}
+	return maxdepth;
+}
+
+bool balanced(btree::node* root){
+	if (nullptr == root) return true;
+	if (!balanced(root->left) || !balanced(root->right)){
+		return false;
+	}
+	size_t left_depth = depth(root->left);
+	size_t right_depth = depth(root->right);
+	return std::abs((int)(right_depth - left_depth)) <= 1; // had to modify this for msvs. int casting from book not working. 
+}
+
+
 
