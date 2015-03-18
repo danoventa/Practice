@@ -35,7 +35,7 @@ public:
 	node* lca_iterative(node* root, node* x, node* y);
 	void inorder(node* root, std::function<void(node*)>visit);
 	void postorder(node* root, std::function<void(node*)> visit);
-	void preorder(node* root, std::function<void(ndoe*)> visit);
+	void preorder(node* root, std::function<void(node*)> visit);
 	node* reconstruct_tree(const std::_Vector_iterator<int>& inorder, const std::vector<int>& preorder);
 
 };

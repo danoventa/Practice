@@ -161,6 +161,19 @@ bool balanced_naive(btree::node* root){
 	return std::abs((int)(right_depth - left_depth)) <= 1; // had to modify this for msvs. int casting from book not working. 
 }
 
+bool find_path(btree::node* root, btree::node* target, std::vector<btree::node*>* path){
+	while (nullptr != root && nullptr != target && (path->empty() || path->back() != target)){
+		path->push_back(root);
+		if (target->value < root->value){
+			root = root->left;
+		}
+		else {
+			root = root->right;
+		}
+	}
+	return !target | path->back() == target;
+}
+
 bool balanced(btree::node* root){
 	std::function<bool(btree::node*, size_t*) > balanced_depth = [&balanced_depth](
 		btree::node* root, size_t* depth){
@@ -187,3 +200,18 @@ bool balanced(btree::node* root){
 	return balanced_depth(root, &depth);
 }
 
+btree::node* lca(btree::node* root, btree::node* x, btree::node* y){
+	std::vector<btree::node*> x_path;
+	std::vector<btree::node*> y_path;
+	find_path(root, x, &x_path);
+	find_path(root, y, &y_path);
+	btree::node* lca = nullptr;
+	auto x_path_iterator = x_path.begin();
+	auto y_path_iterator = y_path.begin();
+	while (x_path_iterator != x_path.end() && y_path_iterator !- y_path.end() && *x_path_iterator == *y_path_iterator) {
+		lca = *x_path_iterator++;
+		x_path_iterator++;
+		y_path_iterator++;
+	}
+	return lca;
+}
