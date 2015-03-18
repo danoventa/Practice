@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "btree.h"
+#include <queue>
 
 
 btree::btree()
@@ -25,7 +26,7 @@ btree::node* insert(btree::node* root, int val){
 }
 
 btree::node* find(btree::node* root, int value){
-	if (nullpr == root || root->value == value){
+	if (nullptr == root || root->value == value){
 		return root;
 	}
 	if (value < root->value){
@@ -106,4 +107,20 @@ size_t size(btree::node* root){
 
 size_t size_iterative(btree::node* root){
 	if (nullptr == root) return 0;
+	size_t count = 0;
+	std::queue<btree::node*> q;
+	q.push(root);
+	while (!q.empty()){
+		auto front = q.front();
+		q.pop();
+		++count;
+		if (nullptr != front->left){
+			q.push(front->left);
+		}
+		if (nullptr != front->right){
+			q.push(front->right);
+		}
+	}
+	return count;
 }
+
