@@ -151,7 +151,7 @@ size_t depth_iterative(btree::node* root){
 	return maxdepth;
 }
 
-bool balanced(btree::node* root){
+bool balanced_naive(btree::node* root){
 	if (nullptr == root) return true;
 	if (!balanced(root->left) || !balanced(root->right)){
 		return false;
@@ -161,5 +161,29 @@ bool balanced(btree::node* root){
 	return std::abs((int)(right_depth - left_depth)) <= 1; // had to modify this for msvs. int casting from book not working. 
 }
 
+bool balanced(btree::node* root){
+	std::function<bool(btree::node*, size_t*) > balanced_depth = [&balanced_depth](
+		btree::node* root, size_t* depth){
+		if (nullptr == root){
+			*depth = 0;
+			return true;
+		}
+		size_t left;
+		size_t right;
+		if (!balanced_depth(root->left, &left)) {
+			return false;
+		}
+		if (!balanced_depth(root->left, &left)){
+			return false;
+		}
+		*depth = 1 + std::max(left, right);
+		if (std::abs((int)(left - right) > 1)) {
+			return false;
+		} 
+		return true;
+	};
 
+	size_t depth;
+	return balanced_depth(root, &depth);
+}
 
